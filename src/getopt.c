@@ -29,20 +29,9 @@
  * SUCH DAMAGE.
  */
 
-#if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)getopt.c	8.3 (Berkeley) 4/27/95";
-#endif /* LIBC_SCCS and not lint */
-#include <sys/cdefs.h>
-__FBSDID("$FreeBSD$");
-
-#include "namespace.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include "un-namespace.h"
-
-#include "libc_private.h"
 
 int	opterr = 1,		/* if error message should be printed */
 	optind = 1,		/* index into parent argv vector */
@@ -58,11 +47,9 @@ char	*optarg;		/* argument associated with option */
  * getopt --
  *	Parse argc/argv argument vector.
  */
-int
-getopt(nargc, nargv, ostr)
-	int nargc;
-	char * const nargv[];
-	const char *ostr;
+int getopt(int nargc,
+		   char* const nargv[],
+	   	   const char* ostr)
 {
 	static char *place = EMSG;		/* option letter processing */
 	char *oli;				/* option letter list index */
@@ -99,7 +86,7 @@ getopt(nargc, nargv, ostr)
 			++optind;
 		if (opterr && *ostr != ':')
 			(void)fprintf(stderr,
-			    "%s: illegal option -- %c\n", _getprogname(),
+			    "%s: illegal option -- %c\n", nargv[0],
 			    optopt);
 		return (BADCH);
 	}
@@ -125,7 +112,7 @@ getopt(nargc, nargv, ostr)
 			if (opterr)
 				(void)fprintf(stderr,
 				    "%s: option requires an argument -- %c\n",
-				    _getprogname(), optopt);
+				    nargv[0], optopt);
 			return (BADCH);
 		}
 		place = EMSG;
