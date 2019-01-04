@@ -34,7 +34,7 @@ void chacha_ivsetup(struct chacha_ctx *x,
     __attribute__((__bounded__(__minbytes__, 2, CHACHA_NONCELEN)))
     __attribute__((__bounded__(__minbytes__, 3, CHACHA_CTRLEN)));
 
-void chacha_encrypt_bytes(struct chacha_ctx *x,
+void chacha_xcrypt_bytes(struct chacha_ctx *x,
                           const uint8_t *m,
                           uint8_t *c,
                           uint32_t bytes)
