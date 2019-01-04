@@ -1,7 +1,7 @@
 VSENCRYPTION
 ============
 
-Very string encryption to keep your file securely.
+Very strong encryption to keep your file securely.
 
 ## Build
 
