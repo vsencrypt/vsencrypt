@@ -31,7 +31,7 @@ int vse_stream_crypt_v1(int mode, int cipher,
                      u_int8_t *file_hash, size_t file_hash_nbytes)
 {
     int ret = 0;
-    struct AES_ctx ctx;
+    aes_ctx_t ctx;
     struct chacha_ctx chacha_ctx;
     salsa20_ctx_t salsa20;
 
