@@ -1,5 +1,7 @@
 # VSENCRYPTION
 
+[![Build Status](https://travis-ci.org/mingchen/vsencryption.svg?branch=master)](https://travis-ci.org/mingchen/vsencryption)
+
 Very strong encryption to keep your file securely.
 
 Supported ciphers:
