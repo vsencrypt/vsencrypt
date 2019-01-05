@@ -300,6 +300,9 @@ int main(int argc, char *argv[])
         if (ret != 0)
         {
             vse_print_error("Error: Failed to rename output file: %s\n", strerror(errno));
+
+            // delete temporial outfile
+            unlink(tmp_outfile);
         }
     }
     else
