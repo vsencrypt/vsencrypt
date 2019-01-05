@@ -5,15 +5,9 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include "hexdump.h"
-#include "aes/aes.h"
-#include "argon2/include/argon2.h"
-#include "argon2/src/blake2/blake2.h"
 #include "getopt.h"
 #include "getpass.h"
 #include "error.h"
-#include "chacha/chacha.h"
-#include "salsa20/salsa20.h"
-
 #include "crypto_random.h"
 #include "encrypt_v1.h"
 #include "decrypt_v1.h"
