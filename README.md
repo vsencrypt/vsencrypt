@@ -2,6 +2,16 @@
 
 Very strong encryption to keep your file securely.
 
+Supported ciphers:
+
+- chacha20          256bits.
+- salsa20           256bits.
+- aes256            AES 256bits in CTR mode.
+- chacha20_aes256
+- aes256_chacha20
+- salsa20_aes256
+- aes256_salsa20
+
 ## Build
 
     make
@@ -68,7 +78,7 @@ Very strong encryption to keep your file securely.
 
   Determined by version.
 
-#### Version 1 header
+#### Version 1 Header
 
     ++++++++++++++++++++++++++++++++++++++++++++++++++++++
     | cipher(1) |  salt(16)  |   iv(16)   |    mac(16)   |
@@ -78,6 +88,8 @@ Very strong encryption to keep your file securely.
 - 16 bytes `salt` for password.
 - 16 bytes `iv` for encryption/decryption.
 - 16 bytes `mac` (message authentication code) of poly1305 used to verify the data integrity and the authenticity.
+
+Version 1 header total size is 1(version) + 1(cipher) + salt(16) + 16(iv) + mac(16) = 50 bytes.
 
 ## Static Check
 
