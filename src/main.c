@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <assert.h>
 #include "hexdump.h"
 #include "getopt.h"
 #include "getpass.h"
@@ -28,55 +29,78 @@ void vse_print_error(const char *fmt, ...)
 static int vse_decrypt_file(const char *password, size_t password_nbytes,
                             const char *infile, const char *outfile)
 {
-    struct stat buf = {0};
-    int ret = stat(infile, &buf);
-    if (ret != 0)
-    {
-        vse_print_error("Error: Failed to open file %s: %s\n", infile, strerror(errno));
-        return 1;
-    }
+    int ret = 0;
+    FILE *fp_in = NULL;
+    FILE *fp_out = NULL;
 
-    if (buf.st_size < FILE_HEADER_LEN)
+    do
     {
-        vse_print_error("Error: File too small to decrypted: %s\n", infile);
-        return 1;
-    }
+        struct stat buf;
+        if (stat(infile, &buf) != 0)
+        {
+            vse_print_error("Error: Failed to stat file %s: %s\n", infile, strerror(errno));
+            ret = ERR_DECRYPT_FILE_FAILED_TO_STAT_INPUT_FILE;
+            break;
+        }
 
-    FILE *fp_in = fopen(infile, "r");
-    if (fp_in == NULL)
-    {
-        vse_print_error("Error: Failed to open file %s for read\n", infile);
-        return 2;
-    }
+        if (buf.st_size < FILE_HEADER_LEN)
+        {
+            vse_print_error("Error: File too small to decrypted: %s\n", infile);
+            ret = ERR_DECRYPT_FILE_INPUT_FILE_SIZE_TOO_SMALL;
+            break;
+        }
 
-    u_int8_t version = 0;
-    if (fread(&version, 1, 1, fp_in) != 1)
+        fp_in = fopen(infile, "r");
+        if (fp_in == NULL)
+        {
+            vse_print_error("Error: Failed to open file %s for read\n", infile);
+            ret = ERR_DECRYPT_FILE_FAILED_TO_OPEN_INPUT_FILE;
+            break;
+        }
+
+        u_int8_t version = 0;
+        if (fread(&version, 1, 1, fp_in) != 1)
+        {
+            vse_print_error("Error: Failed to read 1st byte of file %s\n", infile);
+            ret = ERR_DECRYPT_FILE_FAILED_TO_OPEN_INPUT_FILE;
+            break;
+        }
+
+        if (version != 1)
+        {
+            vse_print_error("Error: Invalid version %d\n", version);
+            ret = ERR_DECRYPT_FILE_INVALID_VERSION;
+            break;
+        }
+
+        fp_out = fopen(outfile, "w");
+        if (fp_out == NULL)
+        {
+            vse_print_error("Error: Failed to open file %s for write\n", outfile);
+            ret = ERR_DECRYPT_FILE_FAILED_TO_OPEN_OUTPUT_FILE;
+            break;
+        }
+
+        switch (version)
+        {
+        case 1:
+            ret = vse_decrypt_file_v1(password, password_nbytes, fp_in, fp_out);
+            break;
+        default:
+            assert(!"BUG: un-handled version");
+        }
+
+    } while (0);
+
+    if (fp_in != NULL)
     {
-        vse_print_error("Error: Failed to read 1st byte of file %s\n", infile);
         fclose(fp_in);
-        return 3;
     }
 
-    FILE *fp_out = fopen(outfile, "w");
-    if (fp_out == NULL)
+    if (fp_out != NULL)
     {
-        vse_print_error("Error: Failed to open file %s for write\n", outfile);
-        fclose(fp_in);
-        return 5;
+        fclose(fp_out);
     }
-
-    if (version == 1)
-    {
-        ret = vse_decrypt_file_v1(password, password_nbytes, fp_in, fp_out);
-    }
-    else
-    {
-        vse_print_error("Error: Invalid version %d\n", version);
-        ret = 5;
-    }
-
-    fclose(fp_in);
-    fclose(fp_out);
 
     return ret;
 }
