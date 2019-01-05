@@ -22,7 +22,6 @@
 
 static int g_quite = 0;
 
-
 void vse_print_error(const char *fmt, ...)
 {
     va_list ap;
@@ -33,7 +32,7 @@ void vse_print_error(const char *fmt, ...)
 }
 
 static int vse_decrypt_file(const char *password, size_t password_nbytes,
-                     const char *infile, const char *outfile)
+                            const char *infile, const char *outfile)
 {
     struct stat buf = {0};
     int ret = stat(infile, &buf);
@@ -109,6 +108,14 @@ static void vse_usage(const char *argv0)
     printf("  -e Encryption.\n\n");
     printf("  -d Decryption.\n\n");
     printf("  -a Encryption cipher, used in encryption mode(-e) only.\n\n");
+    printf("     Available ciphers:\n\n");
+    printf("     chacha20         256bit, faster than AES 256.\n");
+    printf("     salsa20          256bit, faster than AES 256.\n");
+    printf("     aes256           AES 256bit in CTR mode.\n");
+    printf("     aes256_chacha20  aes256 then chacha20.\n");
+    printf("     aes256_salsa20   aes256 then salsa20.\n");
+    printf("     chacha20_aes256  chacha20 then aes256.\n");
+    printf("     salsa20_aes256   salsa20 then aes256.\n\n");
     printf("  -i <infile> Input file for encrypt/decrypt.\n\n");
     printf("  -o <infile> output file for encrypt/decrypt.\n\n");
     printf("  -p Password.\n\n");
@@ -125,27 +132,31 @@ static void vse_usage(const char *argv0)
 static int vse_parse_cipher(const char *cipher_name)
 {
     int cipher = CIPHER_UNKNOWN;
-    if (strcmp(cipher_name, "chacha20") == 0)
+    if (strcmp(cipher_name, "chacha20") == 0 || strcmp(cipher_name, "chacha") == 0)
     {
         cipher = CIPHER_CHACHA20;
     }
-    else if (strcmp(cipher_name, "aes_256_ctr") == 0)
+    else if (strcmp(cipher_name, "salsa20") == 0)
+    {
+        cipher = CIPHER_SALSA20;
+    }
+    else if (strcmp(cipher_name, "aes") == 0 || strcmp(cipher_name, "aes256") == 0)
     {
         cipher = CIPHER_AES_256_CTR;
     }
-    else if (strcmp(cipher_name, "aes_256_ctr_chacha20") == 0)
+    else if (strcmp(cipher_name, "aes256_chacha20") == 0)
     {
         cipher = CIPHER_AES_256_CTR_CHACHA20;
     }
-    else if (strcmp(cipher_name, "chacha20_aes_256_ctr") == 0)
+    else if (strcmp(cipher_name, "chacha20_aes256") == 0)
     {
         cipher = CIPHER_CHACHA20_AES_256_CTR;
     }
-    else if (strcmp(cipher_name, "aes_256_ctr_salsa20") == 0)
+    else if (strcmp(cipher_name, "aes256_salsa20") == 0)
     {
         cipher = CIPHER_AES_256_CTR_SALSA20;
     }
-    else if (strcmp(cipher_name, "salsa20_aes_256_ctr") == 0)
+    else if (strcmp(cipher_name, "salsa20_aes256") == 0)
     {
         cipher = CIPHER_SALSA20_AES_256_CTR;
     }
