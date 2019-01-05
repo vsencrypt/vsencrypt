@@ -236,19 +236,19 @@ int main(int argc, char *argv[])
 
     if (mode == MODE_UNKNOWN)
     {
-        vse_usage(argv[0]);
+        vse_print_error("Error: Missing -e or -d.\n");
         return 1;
     }
 
     if (mode == MODE_ENCRYPT && cipher == CIPHER_UNKNOWN)
     {
-        vse_usage(argv[0]);
+        vse_print_error("Error: Invalid cipher.\n");
         return 1;
     }
 
     if (infile == NULL)
     {
-        vse_usage(argv[0]);
+        vse_print_error("Error: Missing -i\n");
         return 1;
     }
 
@@ -275,7 +275,7 @@ int main(int argc, char *argv[])
 
         if (outfile == NULL)
         {
-            vse_usage(argv[0]);
+            vse_print_error("Error: missing -o\n");
             return 1;
         }
     }
