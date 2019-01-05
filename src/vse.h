@@ -1,7 +1,7 @@
 #ifndef VSE_31FAB0FC_FD40_4BEF_B834_5E8D93C30C5F_H
 #define VSE_31FAB0FC_FD40_4BEF_B834_5E8D93C30C5F_H
 
-#include <stdlib.h>
+#include <sys/types.h>
 #include "error.h"
 
 #define FILE_HASH_LEN 32

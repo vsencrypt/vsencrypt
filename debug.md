@@ -21,3 +21,10 @@ Core file '/cores/core.60372' (x86_64) was loaded.
     frame #8: 0x0000000100498053 vscrypt`main(argc=7, argv=0x00007ffeef7684f0) at main.c:153 [opt]
     frame #9: 0x00007fff77c38015 libdyld.dylib`start + 1
 (lldb)
+
+
+Linux
+
+	docker run -it --name linuxdevbox -v `pwd`:/vsencryption alpine /bin/sh
+	apk add alpine-sdk
+

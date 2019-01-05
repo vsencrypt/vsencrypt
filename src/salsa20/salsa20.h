@@ -1,7 +1,7 @@
 #ifndef SALSA20_3118A7C5_9DBB_425A_A350_302EB42E8649_H
 #define SALSA20_3118A7C5_9DBB_425A_A350_302EB42E8649_H
 
-#include <stdlib.h>
+#include <sys/types.h>
 
 typedef struct salsa20_ctx
 {

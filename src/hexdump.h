@@ -1,7 +1,7 @@
 #ifndef HEXDUMP_476675B9_BF18_4BFA_BD7C_193CEDE448CC_H
 #define HEXDUMP_476675B9_BF18_4BFA_BD7C_193CEDE448CC_H
 
-#include <stdlib.h>
+#include <sys/types.h>
 
 /**
  * Hex dump

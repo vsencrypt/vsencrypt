@@ -4,6 +4,7 @@ D. J. Bernstein
 Public domain.
 */
 
+#include <stdlib.h> // NULL
 #include "chacha.h"
 
 /* $OpenBSD: chacha.c,v 1.1 2013/11/21 00:45:44 djm Exp $ */

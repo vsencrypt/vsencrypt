@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "crypto_random.h"
 
 void crypto_random(void *buf, size_t nbytes)
