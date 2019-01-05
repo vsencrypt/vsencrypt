@@ -1,5 +1,4 @@
-VSENCRYPTION
-============
+# VSENCRYPTION
 
 Very strong encryption to keep your file securely.
 
@@ -52,6 +51,33 @@ Very strong encryption to keep your file securely.
     Decryption:
     vsencrypt -d -i foo.jpg.vse -d foo.jpg -p secret123
     vsencrypt -d -i foo.jpg.vse  # will output as foo.jpg and ask password
+
+## Design
+
+### File Format
+
+    +++++++++++++++++++++++++++++++++++++++++++++++++++++
+    | version | header | encrypted data...              |
+    +++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+### Version
+
+ 1 byte. File format version. Current version is 1.
+
+### Header
+
+  Determined by version.
+
+#### Version 1 header
+
+    ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    | cipher(1) |  salt(16)  |   iv(16)   |    mac(16)   |
+    ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+- 1 byte `cipher` algorithm.
+- 16 bytes `salt` for password.
+- 16 bytes `iv` for encryption/decryption.
+- 16 bytes `mac` (message authentication code) of poly1305 used to verify the data integrity and the authenticity.
 
 ## Static Check
 
