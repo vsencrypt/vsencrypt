@@ -98,6 +98,12 @@ Supported ciphers:
 
 Version 1 header total size is 1(version) + 1(cipher) + salt(16) + 16(iv) + mac(16) = 50 bytes.
 
+### Crypto
+
+Key derivation function is [Argon2](https://en.wikipedia.org/wiki/Argon2) which was selected as the winner of the Password Hashing Competition in July 2015.
+
+[Poly1305](https://en.wikipedia.org/wiki/Poly1305) is used as message authentication code (MAC). Poly1305 has been standardized in [RFC 7539](https://tools.ietf.org/html/rfc7539).
+
 ## Static Check
 
 clang setup for static analysis
@@ -112,3 +118,4 @@ MIT. see [LICENSE.txt](LICENSE.txt)
 
 * [salsa20](https://cr.yp.to/salsa20.html)
 * [chacha20](https://cr.yp.to/chacha.html)
+* [argon2](https://github.com/P-H-C/phc-winner-argon2)
