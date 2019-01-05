@@ -14,7 +14,7 @@ int vse_gen_key_v1(const u_int8_t *salt, size_t salt_nbytes,
                    const char *password, size_t password_nbytes,
                    size_t key_nbytes, u_int8_t *key)
 {
-    uint32_t time_cost = 8;           // 8-pass computation
+    uint32_t time_cost = 2;           // 2-pass computation
     uint32_t memory_cost = (1 << 16); // 64 MB memory vse_usage
     uint32_t parallelism = 4;         // number of threads and lanes
 
