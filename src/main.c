@@ -188,6 +188,8 @@ int main(int argc, char *argv[])
     char *outfile = NULL;
     size_t password_nbytes = 0;
 
+    opterr = 0; // do not allow getopt() print any error.
+
     while ((opt = getopt(argc, argv, "hvqfedc:p:i:o:")) != -1)
     {
         switch (opt)
@@ -226,7 +228,8 @@ int main(int argc, char *argv[])
             password_nbytes = strlen(password);
             break;
         default: /* '?' */
-            vse_usage(argv[0]);
+            vse_print_error("Error: Illegal option \"-%c\".\n", optopt);
+            vse_print_error("       Use \"%s -h\" to see all available options.\n", argv[0]);
             exit(EXIT_FAILURE);
         }
     }
