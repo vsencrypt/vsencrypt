@@ -92,13 +92,14 @@ static void vse_usage(const char *argv0)
     printf("NAME\n");
     printf("  %s -- Very secure file encryption.\n\n", argv0);
     printf("SYNOPSIS\n");
-    printf("  %s [-h] [-v] [-q] -e|-d [-a cipher] -i infile [-o outfile] [-p password]\n\n", argv0);
+    printf("  %s [-h] [-v] [-q] [-f] -e|-d [-a cipher] -i infile [-o outfile] [-p password]\n\n", argv0);
     printf("DESCRIPTION\n");
     printf("  Use very strong cipher to encrypt/decrypt file.\n\n");
     printf("  The following options are available:\n\n");
     printf("  -h Help.\n\n");
     printf("  -v Show version.\n\n");
     printf("  -q Quiet. No error output.\n\n");
+    printf("  -f Force override output file if already exist.\n\n");
     printf("  -e Encryption.\n\n");
     printf("  -d Decryption.\n\n");
     printf("  -a Encryption cipher, used in encryption mode(-e) only.\n\n");
@@ -181,12 +182,13 @@ int main(int argc, char *argv[])
     int mode = MODE_UNKNOWN;                  // encrypt or decrypt
     int cipher = CIPHER_AES_256_CTR_CHACHA20; // default cipher
     int opt;
+    int force_override_outfile = 0;
     char *password = NULL;
     char *infile = NULL;
     char *outfile = NULL;
     size_t password_nbytes = 0;
 
-    while ((opt = getopt(argc, argv, "hvqedc:p:i:o:")) != -1)
+    while ((opt = getopt(argc, argv, "hvqfedc:p:i:o:")) != -1)
     {
         switch (opt)
         {
@@ -200,6 +202,9 @@ int main(int argc, char *argv[])
             // quite mode, no error print.
             // Use exit code to determine encrypt/decrypt success/failure
             g_quite = 1;
+            break;
+        case 'f':
+            force_override_outfile = 1;
             break;
         case 'e':
             mode = MODE_ENCRYPT;
@@ -272,6 +277,13 @@ int main(int argc, char *argv[])
         }
     }
 
+    struct stat stat_buf;
+    if (force_override_outfile == 0 && stat(outfile, &stat_buf) == 0)
+    {
+        vse_print_error("Error: output file %s already exist. Use -f to force override it.\n", outfile);
+        return ERR_MAIN_OUTPUT_FILE_ALREADY_EXIST;
+    }
+
     if (password == NULL)
     {
         password = getpass("Password: ");
@@ -280,7 +292,7 @@ int main(int argc, char *argv[])
 
     const char *tmp_outfile = gen_tmp_filename(outfile);
 
-    printf("mode=%d, cipher=%d, infile=%s, outfile=%s tmp_outfile=%s\n",
+    printf("mode=%d, cipher=0x%x, infile=%s, outfile=%s tmp_outfile=%s\n",
            mode, cipher, infile, outfile, tmp_outfile);
 
     int ret = 0;

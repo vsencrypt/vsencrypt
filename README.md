@@ -25,7 +25,7 @@ Supported ciphers:
 
 ## Usage
 
-    vsencrypt [-h] [-v] [-q] -e|-d [-a cipher] -i infile [-o outfile] [-p password]
+    vsencrypt [-h] [-v] [-q] [-f] -e|-d [-a cipher] -i infile [-o outfile] [-p password]
 
     DESCRIPTION
     Use very strong cipher to encrypt/decrypt file.
@@ -37,6 +37,8 @@ Supported ciphers:
     -v Show version.
 
     -q Quiet. No error output.
+
+    -f Force override output file if already exist.
 
     -e Encryption.
 
