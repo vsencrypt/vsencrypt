@@ -7,13 +7,14 @@ SRC = $(MAIN_SRC) $(AES_SRC) $(ARGON2_SRC) $(SALSA20_SRC) $(CHACHA20_SRC)
 
 INCLUDES=-Isrc/argon2/include -Isrc/argon2/src/blake2
 CFLAGS = -Wall -g -O3 $(INCLUDES)
+LDFLAGS = -lpthread
 TARGET = vsencrypt
 AES_TEST = aes_test
 
 all: $(TARGET)
 
 $(TARGET): $(SRC)
-	$(CC) $(CFLAGS) -o $(TARGET) $(SRC)
+	$(CC) $(CFLAGS) -o $(TARGET) $(SRC) $(LDFLAGS)
 
 test: $(AES_TEST)
 	./$(AES_TEST)
