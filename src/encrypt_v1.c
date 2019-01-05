@@ -83,6 +83,7 @@ int vse_stream_crypt_v1(int mode, int cipher,
             AES_CTR_xcrypt_buffer(&ctx, buf, len);
             break;
         default:
+            vse_print_error("Error: Invalid cipher %d", cipher);
             ret = ERR_STREAM_CRYPT_INVALID_CIPHER;
             break;
         }
@@ -93,8 +94,9 @@ int vse_stream_crypt_v1(int mode, int cipher,
             blake2b_update(&blake2b, buf, len);
         }
 
-        if (fwrite(buf, len, 1, fp_out) != len)
+        if (fwrite(buf, 1, len, fp_out) != len)
         {
+            vse_print_error("Error: Failed to write to output file: %s\n", strerror(errno));
             return ERR_STREAM_CRYPT_WRITE;
         }
     }
@@ -129,6 +131,7 @@ int vse_encrypt_file_v1(int cipher,
         if (fp_in == NULL)
         {
             vse_print_error("Error: Failed to open input file %s: %s\n", infile, strerror(errno));
+            ret = ERR_ENCRYPT_FILE_V1_FAIL_TO_OPEN_INPUT_FILE;
             break;
         }
 
@@ -136,12 +139,25 @@ int vse_encrypt_file_v1(int cipher,
         if (fp_out == NULL)
         {
             vse_print_error("Error: Failed to open output file %s: %s\n", outfile, strerror(errno));
+            ret = ERR_ENCRYPT_FILE_V1_FAIL_TO_OPEN_OUTPUT_FILE;
             break;
         }
 
         u_int8_t version = 1;
-        fwrite(&version, 1, 1, fp_out);
-        fseek(fp_out, sizeof(vsc_header_v1_t), SEEK_CUR);
+        if (fwrite(&version, 1, 1, fp_out) != 1)
+        {
+            vse_print_error("Error: Failed to write version: %s\n", strerror(errno));
+            ret = ERR_ENCRYPT_FILE_V1_FAIL_TO_WRITE_VERSION;
+            break;
+        }
+
+        if (fseek(fp_out, sizeof(vsc_header_v1_t), SEEK_CUR) != 0)
+        {
+            vse_print_error("Error: Failed to seek to end of header: %s\n", strerror(errno));
+            ret = ERR_ENCRYPT_FILE_V1_FAIL_TO_SEEK_END_OF_HEADER;
+            break;
+        }
+
         ret = vse_stream_crypt_v1(MODE_ENCRYPT,
                                cipher,
                                header.iv, IV_LEN,
@@ -163,16 +179,14 @@ int vse_encrypt_file_v1(int cipher,
                       message, sizeof(message) / sizeof(u_int8_t),
                       key);
 
-        ret = fseek(fp_out, 1, SEEK_SET);
-        if (ret != 0)
+        if (fseek(fp_out, 1, SEEK_SET) != 0)
         {
-            vse_print_error("Error: Failed to seek to file %s: %s", outfile, strerror(errno));
+            vse_print_error("Error: Failed to seek to v1 header of file %s: %s\n", outfile, strerror(errno));
             ret = ERR_ENCRYPT_FILE_OUTFILE_SEEK_TO_HEAD_FAILED;
             break;
         }
 
-        ret = fwrite(&header, sizeof(vsc_header_v1_t), 1, fp_out);
-        if (ret != 1)
+        if (fwrite(&header, sizeof(vsc_header_v1_t), 1, fp_out) != 1)
         {
             vse_print_error("Error: Failed to write file header: %s", strerror(errno));
             ret = ERR_ENCRYPT_FILE_FAILED_TO_WRITE_HEADER;

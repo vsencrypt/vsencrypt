@@ -84,12 +84,6 @@ static int vse_decrypt_file(const char *password, size_t password_nbytes,
     fclose(fp_in);
     fclose(fp_out);
 
-    if (ret != 0)
-    {
-        // delete outfile
-        unlink(outfile);
-    }
-
     return ret;
 }
 
@@ -307,6 +301,11 @@ int main(int argc, char *argv[])
         {
             vse_print_error("Error: Failed to rename output file: %s\n", strerror(errno));
         }
+    }
+    else
+    {
+        // delete temporial outfile
+        unlink(tmp_outfile);
     }
 
     // if (optind >= argc)
