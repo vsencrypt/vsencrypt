@@ -4,13 +4,18 @@ Very strong encryption to keep your file securely.
 
 Supported ciphers:
 
-- chacha20          256bits.
-- salsa20           256bits.
-- aes256            AES 256bits in CTR mode.
-- chacha20_aes256
-- aes256_chacha20
-- salsa20_aes256
-- aes256_salsa20
+- **chacha20**          256bits.
+- **salsa20**           256bits.
+- **aes256**            AES 256bits in CTR mode.
+- **chacha20_aes256**
+- **aes256_chacha20**
+- **salsa20_aes256**
+- **aes256_salsa20**
+
+## Support Platforms
+
+- Mac OS
+- Linux
 
 ## Build
 
