@@ -82,6 +82,14 @@ int vse_stream_crypt_v1(int mode, int cipher,
             chacha_xcrypt_bytes(&chacha_ctx, buf, buf, len);
             AES_CTR_xcrypt_buffer(&ctx, buf, len);
             break;
+        case CIPHER_AES_256_CTR_SALSA20:
+            AES_CTR_xcrypt_buffer(&ctx, buf, len);
+            chacha_xcrypt_bytes(&chacha_ctx, buf, buf, len);
+            break;
+        case CIPHER_SALSA20_AES_256_CTR:
+            chacha_xcrypt_bytes(&chacha_ctx, buf, buf, len);
+            AES_CTR_xcrypt_buffer(&ctx, buf, len);
+            break;
         default:
             vse_print_error("Error: Invalid cipher %d", cipher);
             ret = ERR_STREAM_CRYPT_INVALID_CIPHER;

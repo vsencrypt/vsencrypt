@@ -16,8 +16,9 @@ all: $(TARGET)
 $(TARGET): $(SRC)
 	$(CC) $(CFLAGS) -o $(TARGET) $(SRC) $(LDFLAGS)
 
-test: $(AES_TEST)
+test: all $(AES_TEST)
 	./$(AES_TEST)
+	./scripts/test_decryption.sh
 
 $(AES_TEST): src/aes/aes.c src/aes/aes.h src/aes/aes_test.c
 	$(CC) -Wall -o $(AES_TEST) src/aes/aes.c src/aes/aes_test.c

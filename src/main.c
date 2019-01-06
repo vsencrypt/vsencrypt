@@ -197,6 +197,7 @@ static const char *gen_tmp_filename(const char *path)
 
 int main(int argc, char *argv[])
 {
+    int ret = 0;
     int mode = MODE_UNKNOWN;                  // encrypt or decrypt
     int cipher = CIPHER_AES_256_CTR_CHACHA20; // default cipher
     int opt;
@@ -313,10 +314,8 @@ int main(int argc, char *argv[])
 
     const char *tmp_outfile = gen_tmp_filename(outfile);
 
-    printf("mode=%d, cipher=0x%x, infile=%s, outfile=%s tmp_outfile=%s\n",
-           mode, cipher, infile, outfile, tmp_outfile);
-
-    int ret = 0;
+    // printf("mode=%d, cipher=0x%x, infile=%s, outfile=%s tmp_outfile=%s\n",
+    //       mode, cipher, infile, outfile, tmp_outfile);
 
     if (mode == MODE_ENCRYPT)
     {
