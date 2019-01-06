@@ -22,6 +22,7 @@ Supported ciphers:
 ## Build
 
     make
+    make test
 
 ## Usage
 
