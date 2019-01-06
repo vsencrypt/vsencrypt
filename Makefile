@@ -16,9 +16,19 @@ all: $(TARGET)
 $(TARGET): $(SRC)
 	$(CC) $(CFLAGS) -o $(TARGET) $(SRC) $(LDFLAGS)
 
-test: all $(AES_TEST)
+.PHONY: test_aes test_decryption_exist_files test_encryption
+
+test: all test_aes test_decryption_exist_files test_encryption
+
+test_aes: $(AES_TEST)
 	./$(AES_TEST)
+
+test_decryption_exist_files:
 	./scripts/test_decryption.sh
+
+test_encryption:
+	rm testfiles/*.vse
+	./scripts/gen_testfiles.sh
 
 $(AES_TEST): src/aes/aes.c src/aes/aes.h src/aes/aes_test.c
 	$(CC) -Wall -o $(AES_TEST) src/aes/aes.c src/aes/aes_test.c

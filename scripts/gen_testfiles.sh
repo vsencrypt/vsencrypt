@@ -16,7 +16,7 @@ for infile in $infiles
 do
     for cipher in $ciphers
     do
-        #echo $cipher
+        echo "Encrypting $infile with cipher $cipher"
         encryptedfile=$infile.$cipher.vse
 
         if [ -e $encryptedfile ]; then
