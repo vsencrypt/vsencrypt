@@ -1,6 +1,6 @@
-# VSENCRYPTION
+# vsencrypt
 
-[![Build Status](https://travis-ci.org/mingchen/vsencrypt.svg?branch=master)](https://travis-ci.org/mingchen/vsencrypt)
+[![Build Status](https://travis-ci.org/vsencrypt/vsencrypt.svg?branch=master)](https://travis-ci.org/vsencrypt/vsencrypt)
 
 Very strong encryption to keep your file securely.
 
