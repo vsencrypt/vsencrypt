@@ -14,7 +14,14 @@ do
         echo "  failed: $ret"
         exit 1
     else
-        echo "  success"
+        plaintextfile=$(echo $infile | cut -d'.' -f1)
+        sha1=$(shasum $decryptedfile | cut -d' ' -f1)
+        sha2=$(shasum $plaintextfile | cut -d' ' -f1)
+        if [ "$sha1" != "$sha2" ]; then
+            echo "  failed: Not match plain text file."
+        else
+            echo "  success"
+        fi
     fi
 
     rm -f $decryptedfile
