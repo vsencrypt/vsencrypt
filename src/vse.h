@@ -29,9 +29,9 @@ typedef struct vse_header_v1
     u_int8_t salt[SALT_LEN]; // salt for password
     u_int8_t iv[IV_LEN];     // iv for encryption
     u_int8_t mac[MAC_LEN];   //
-} vsc_header_v1_t;
+} vse_header_v1_t;
 
-#define FILE_HEADER_LEN (sizeof(vsc_header_v1_t) / sizeof(char))
+#define FILE_HEADER_LEN (sizeof(vse_header_v1_t) / sizeof(char))
 
 void vse_print_error(const char *fmt, ...);
 

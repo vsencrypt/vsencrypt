@@ -3,10 +3,11 @@
 #include <errno.h>
 #include "encrypt_v1.h"
 #include "crypto_random.h"
-#include "argon2.h"
-#include "blake2.h"
+#include "argon2/include/argon2.h"
+#include "argon2/src/blake2/blake2.h"
 #include "salsa20/salsa20.h"
 #include "aes/aes.h"
+#include "hexdump.h"
 #include "chacha/chacha.h"
 #include "chacha/poly1305.h"
 
@@ -24,31 +25,121 @@ int vse_gen_key_v1(const u_int8_t *salt, size_t salt_nbytes,
                             key, key_nbytes);
 }
 
-int vse_stream_crypt_v1(int mode, int cipher,
-                     const u_int8_t *iv, size_t iv_nbytes,
-                     const u_int8_t *key, size_t key_nbytes,
-                     FILE *fp_in, FILE *fp_out,
-                     u_int8_t *file_hash, size_t file_hash_nbytes)
+/**
+ * Generate IV based on salt and input.
+ *
+ * Faster than vse_gen_key_v1().
+ */
+int vse_gen_iv_v1(const u_int8_t *salt, size_t salt_nbytes,
+                  const u_int8_t *password, size_t password_nbytes,
+                  size_t iv_nbytes, u_int8_t *iv)
 {
-    int ret = 0;
-    aes_ctx_t ctx;
-    chacha_ctx_t chacha_ctx;
-    salsa20_ctx_t salsa20;
+    uint32_t time_cost = 1;          // 1-pass computation
+    uint32_t memory_cost = (1 << 8); // 32 MB memory vse_usage
+    uint32_t parallelism = 1;        // number of threads and lanes
 
+    return argon2i_hash_raw(time_cost, memory_cost, parallelism,
+                            password, password_nbytes,
+                            salt, salt_nbytes,
+                            iv, iv_nbytes);
+}
+
+void vse_calculate_mac_v1(const vse_header_v1_t *header,
+                          const u_int8_t *file_hash,
+                          const u_int8_t *key, // 32 bytes
+                          u_int8_t *mac)       // 16 bytes. out
+{
+    u_int8_t message[SALT_LEN + IV_LEN + FILE_HASH_LEN] = {0};
+    memcpy(message, header->salt, SALT_LEN);
+    memcpy(message + SALT_LEN, header->iv, IV_LEN);
+    memcpy(message + SALT_LEN + IV_LEN, file_hash, FILE_HASH_LEN);
+
+    poly1305_auth(mac,
+                  message, sizeof(message) / sizeof(u_int8_t),
+                  key);
+}
+
+static void vse_setup_cipher_v1(salsa20_ctx_t *salsa20,
+                                chacha_ctx_t *chacha,
+                                aes_ctx_t *aes,
+                                const u_int8_t *iv, size_t iv_nbytes,
+                                const u_int8_t *key, size_t key_nbytes)
+{
     u_int8_t iv_aes[IV_LEN] = {0};
     u_int8_t iv_chacha[IV_LEN] = {0};
     u_int8_t iv_salsa20[IV_LEN] = {0};
-    vse_gen_key_v1(iv, iv_nbytes, "aes", 3, IV_LEN, iv_aes);
-    vse_gen_key_v1(iv, iv_nbytes, "chacha", 6, IV_LEN, iv_chacha);
-    vse_gen_key_v1(iv, iv_nbytes, "salsa20", 7, IV_LEN, iv_chacha);
+    vse_gen_iv_v1(iv, iv_nbytes, (u_int8_t *)"aes", 3, IV_LEN, iv_aes);
+    vse_gen_iv_v1(iv, iv_nbytes, (u_int8_t *)"chacha", 6, IV_LEN, iv_chacha);
+    vse_gen_iv_v1(iv, iv_nbytes, (u_int8_t *)"salsa20", 7, IV_LEN, iv_chacha);
 
-    AES_init_ctx_iv(&ctx, key, iv_aes);
+    AES_init_ctx_iv(aes, key, iv_aes);
 
-    chacha_ivsetup(&chacha_ctx, iv_chacha, NULL);
-    chacha_keysetup(&chacha_ctx, key, 256);
+    chacha_ivsetup(chacha, iv_chacha, NULL);
+    chacha_keysetup(chacha, key, 256);
 
-    salsa20_keysetup(&salsa20, key, 256, IV_LEN * 8);
-    salsa20_ivsetup(&salsa20, iv_salsa20);
+    salsa20_keysetup(salsa20, key, 256, IV_LEN * 8);
+    salsa20_ivsetup(salsa20, iv_salsa20);
+}
+
+int vse_block_xcrypt_v1(int cipher,
+                        salsa20_ctx_t *salsa20,
+                        chacha_ctx_t *chacha,
+                        aes_ctx_t *aes,
+                        u_int8_t *buf, size_t buf_nbytes)
+{
+    int ret = 0;
+    switch (cipher)
+    {
+    case CIPHER_SALSA20:
+        salsa20_xcrypt_bytes(salsa20, buf, buf, buf_nbytes);
+        break;
+    case CIPHER_CHACHA20:
+        chacha_xcrypt_bytes(chacha, buf, buf, buf_nbytes);
+        break;
+    case CIPHER_AES_256_CTR:
+        AES_CTR_xcrypt_buffer(aes, buf, buf_nbytes);
+        break;
+    case CIPHER_AES_256_CTR_CHACHA20:
+        AES_CTR_xcrypt_buffer(aes, buf, buf_nbytes);
+        chacha_xcrypt_bytes(chacha, buf, buf, buf_nbytes);
+        break;
+    case CIPHER_CHACHA20_AES_256_CTR:
+        chacha_xcrypt_bytes(chacha, buf, buf, buf_nbytes);
+        AES_CTR_xcrypt_buffer(aes, buf, buf_nbytes);
+        break;
+    case CIPHER_AES_256_CTR_SALSA20:
+        AES_CTR_xcrypt_buffer(aes, buf, buf_nbytes);
+        salsa20_xcrypt_bytes(salsa20, buf, buf, buf_nbytes);
+        break;
+    case CIPHER_SALSA20_AES_256_CTR:
+        salsa20_xcrypt_bytes(salsa20, buf, buf, buf_nbytes);
+        AES_CTR_xcrypt_buffer(aes, buf, buf_nbytes);
+        break;
+    default:
+        vse_print_error("Error: Invalid cipher %d", cipher);
+        ret = ERR_ENCRYPT_V1_STREAM_CRYPT_INVALID_CIPHER;
+        break;
+    }
+
+    return ret;
+}
+
+int vse_stream_crypt_v1(int mode, int cipher,
+                        const u_int8_t *iv, size_t iv_nbytes,
+                        const u_int8_t *key, size_t key_nbytes,
+                        FILE *fp_in, FILE *fp_out,
+                        u_int8_t *file_hash, size_t file_hash_nbytes)
+{
+    int ret = 0;
+    aes_ctx_t aes;
+    chacha_ctx_t chacha;
+    salsa20_ctx_t salsa20;
+
+    vse_setup_cipher_v1(&salsa20,
+                        &chacha,
+                        &aes,
+                        iv, iv_nbytes,
+                        key, key_nbytes);
 
     blake2b_state blake2b;
     blake2b_init_key(&blake2b, file_hash_nbytes, iv, iv_nbytes);
@@ -57,56 +148,29 @@ int vse_stream_crypt_v1(int mode, int cipher,
     size_t len;
     while ((len = fread(buf, 1, 4096, fp_in)) > 0)
     {
+        ret = vse_block_xcrypt_v1(cipher, &salsa20, &chacha, &aes, buf, len);
+        if (ret != 0)
+        {
+            return ret;
+        }
+
         if (mode == MODE_ENCRYPT)
         {
-            // calculate hash before encrypt
-            blake2b_update(&blake2b, buf, len);
-        }
-
-        switch (cipher)
-        {
-        case CIPHER_SALSA20:
-            salsa20_xcrypt_bytes(&salsa20, buf, buf, len);
-            break;
-        case CIPHER_CHACHA20:
-            chacha_xcrypt_bytes(&chacha_ctx, buf, buf, len);
-            break;
-        case CIPHER_AES_256_CTR:
-            AES_CTR_xcrypt_buffer(&ctx, buf, len);
-            break;
-        case CIPHER_AES_256_CTR_CHACHA20:
-            AES_CTR_xcrypt_buffer(&ctx, buf, len);
-            chacha_xcrypt_bytes(&chacha_ctx, buf, buf, len);
-            break;
-        case CIPHER_CHACHA20_AES_256_CTR:
-            chacha_xcrypt_bytes(&chacha_ctx, buf, buf, len);
-            AES_CTR_xcrypt_buffer(&ctx, buf, len);
-            break;
-        case CIPHER_AES_256_CTR_SALSA20:
-            AES_CTR_xcrypt_buffer(&ctx, buf, len);
-            chacha_xcrypt_bytes(&chacha_ctx, buf, buf, len);
-            break;
-        case CIPHER_SALSA20_AES_256_CTR:
-            chacha_xcrypt_bytes(&chacha_ctx, buf, buf, len);
-            AES_CTR_xcrypt_buffer(&ctx, buf, len);
-            break;
-        default:
-            vse_print_error("Error: Invalid cipher %d", cipher);
-            ret = ERR_STREAM_CRYPT_INVALID_CIPHER;
-            break;
-        }
-
-        if (mode == MODE_DECRYPT)
-        {
-            // calculate hash after decrypt
+            // calculate hash after encrypt
             blake2b_update(&blake2b, buf, len);
         }
 
         if (fwrite(buf, 1, len, fp_out) != len)
         {
             vse_print_error("Error: Failed to write to output file: %s\n", strerror(errno));
-            return ERR_STREAM_CRYPT_WRITE;
+            return ERR_ENCRYPT_V1_STREAM_CRYPT_FAILED_TO_WRITE_OUTFILE;
         }
+    }
+
+    if (!feof(fp_in))
+    {
+        vse_print_error("Error: Failed to read infile: %s", strerror(errno));
+        return ERR_ENCRYPT_V1_STREAM_CRYPT_FAILED_TO_READ_INFILE;
     }
 
     blake2b_final(&blake2b, file_hash, file_hash_nbytes);
@@ -114,15 +178,21 @@ int vse_stream_crypt_v1(int mode, int cipher,
     return ret;
 }
 
+/**
+ * Encrypt file.
+ *
+ * The MAC calculation is based on salt, iv and encrypted data
+ * to provide authentication and integration.
+ */
 int vse_encrypt_file_v1(int cipher,
-                     const char *password, size_t password_nbytes,
-                     const char *infile, const char *outfile)
+                        const char *password, size_t password_nbytes,
+                        const char *infile, const char *outfile)
 {
     int ret = 0;
     u_int8_t key[KEY_LEN] = {0};
     u_int8_t file_hash[FILE_HASH_LEN];
-    vsc_header_v1_t header;
-    memset(&header, 0, sizeof(vsc_header_v1_t));
+    vse_header_v1_t header;
+    memset(&header, 0, sizeof(vse_header_v1_t));
 
     header.cipher = cipher;
     crypto_random(header.salt, SALT_LEN);
@@ -159,7 +229,7 @@ int vse_encrypt_file_v1(int cipher,
             break;
         }
 
-        if (fseek(fp_out, sizeof(vsc_header_v1_t), SEEK_CUR) != 0)
+        if (fseek(fp_out, sizeof(vse_header_v1_t), SEEK_CUR) != 0)
         {
             vse_print_error("Error: Failed to seek to end of header: %s\n", strerror(errno));
             ret = ERR_ENCRYPT_FILE_V1_FAIL_TO_SEEK_END_OF_HEADER;
@@ -167,25 +237,22 @@ int vse_encrypt_file_v1(int cipher,
         }
 
         ret = vse_stream_crypt_v1(MODE_ENCRYPT,
-                               cipher,
-                               header.iv, IV_LEN,
-                               key, KEY_LEN,
-                               fp_in, fp_out,
-                               file_hash, FILE_HASH_LEN);
+                                  cipher,
+                                  header.iv, IV_LEN,
+                                  key, KEY_LEN,
+                                  fp_in, fp_out,
+                                  file_hash, FILE_HASH_LEN);
 
         if (ret != 0)
         {
             break;
         }
 
-        u_int8_t message[SALT_LEN + IV_LEN + FILE_HASH_LEN] = {0};
-        memcpy(message, header.salt, SALT_LEN);
-        memcpy(message + SALT_LEN, header.iv, IV_LEN);
-        memcpy(message + SALT_LEN + IV_LEN, file_hash, FILE_HASH_LEN);
+        vse_calculate_mac_v1(&header, file_hash, key, header.mac);
 
-        poly1305_auth(header.mac,
-                      message, sizeof(message) / sizeof(u_int8_t),
-                      key);
+        // char hex_out[1000] = {0};
+        // printf("enc: file_hash: %s\n", hexdump(file_hash, 16, hex_out));
+        // printf("enc: mac: %s\n", hexdump(header.mac, 16, hex_out));
 
         if (fseek(fp_out, 1, SEEK_SET) != 0)
         {
@@ -194,7 +261,7 @@ int vse_encrypt_file_v1(int cipher,
             break;
         }
 
-        if (fwrite(&header, sizeof(vsc_header_v1_t), 1, fp_out) != 1)
+        if (fwrite(&header, sizeof(vse_header_v1_t), 1, fp_out) != 1)
         {
             vse_print_error("Error: Failed to write file header: %s", strerror(errno));
             ret = ERR_ENCRYPT_FILE_FAILED_TO_WRITE_HEADER;
