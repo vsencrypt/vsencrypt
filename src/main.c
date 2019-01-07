@@ -125,7 +125,7 @@ static void vse_usage(const char *argv0)
     printf("     chacha20         256bit, faster than AES 256.\n");
     printf("     salsa20          256bit, faster than AES 256.\n");
     printf("     aes256           AES 256bit in CTR mode.\n");
-    printf("     aes256_chacha20  aes256 then chacha20.\n");
+    printf("     aes256_chacha20  aes256 then chacha20 (default cipher).\n");
     printf("     aes256_salsa20   aes256 then salsa20.\n");
     printf("     chacha20_aes256  chacha20 then aes256.\n");
     printf("     salsa20_aes256   salsa20 then aes256.\n\n");
