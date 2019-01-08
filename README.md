@@ -26,7 +26,7 @@ Supported ciphers:
 
 ## Usage
 
-    vsencrypt [-h] [-v] [-q] [-f] -e|-d [-a cipher] -i infile [-o outfile] [-p password]
+    vsencrypt [-h] [-v] [-q] [-f] [-D] -e|-d [-a cipher] -i infile [-o outfile] [-p password]
 
     DESCRIPTION
     Use very strong cipher to encrypt/decrypt file.
@@ -40,6 +40,8 @@ Supported ciphers:
     -q Quiet. No error output.
 
     -f Force override output file if already exist.
+
+    -D Delete input file if encrypt/decrypt success.
 
     -e Encryption.
 
@@ -59,7 +61,7 @@ Supported ciphers:
 
     -i <infile> Input file for encrypt/decrypt.
 
-    -o <infile> output file for encrypt/decrypt.
+    -o <infile> Output file for encrypt/decrypt.
 
     -p Password.
 
@@ -119,6 +121,7 @@ MIT. see [LICENSE.txt](LICENSE.txt)
 
 ## References
 
+* [serpent](https://www.cl.cam.ac.uk/~rja14/serpent.html)
 * [salsa20](https://cr.yp.to/salsa20.html)
 * [chacha20](https://cr.yp.to/chacha.html)
 * [argon2](https://github.com/P-H-C/phc-winner-argon2)

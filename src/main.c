@@ -110,7 +110,7 @@ static void vse_usage(const char *argv0)
     printf("NAME\n");
     printf("  %s -- Very secure file encryption.\n\n", argv0);
     printf("SYNOPSIS\n");
-    printf("  %s [-h] [-v] [-q] [-f] -e|-d [-a cipher] -i infile [-o outfile] [-p password]\n\n", argv0);
+    printf("  %s [-h] [-v] [-q] [-f] [-D] -e|-d [-a cipher] -i infile [-o outfile] [-p password]\n\n", argv0);
     printf("DESCRIPTION\n");
     printf("  Use very strong cipher to encrypt/decrypt file.\n\n");
     printf("  The following options are available:\n\n");
@@ -118,6 +118,7 @@ static void vse_usage(const char *argv0)
     printf("  -v Show version.\n\n");
     printf("  -q Quiet. No error output.\n\n");
     printf("  -f Force override output file if already exist.\n\n");
+    printf("  -D Delete input file if encrypt/decrypt success.\n\n");
     printf("  -e Encryption.\n\n");
     printf("  -d Decryption.\n\n");
     printf("  -a Encryption cipher, used in encryption mode(-e) only.\n\n");
@@ -130,7 +131,7 @@ static void vse_usage(const char *argv0)
     printf("     chacha20_aes256  chacha20 then aes256.\n");
     printf("     salsa20_aes256   salsa20 then aes256.\n\n");
     printf("  -i <infile> Input file for encrypt/decrypt.\n\n");
-    printf("  -o <infile> output file for encrypt/decrypt.\n\n");
+    printf("  -o <infile> Output file for encrypt/decrypt.\n\n");
     printf("  -p Password.\n\n");
     printf("EXAMPLES\n");
     printf("  Encryption:\n");
@@ -139,7 +140,7 @@ static void vse_usage(const char *argv0)
     printf("  Decryption:\n");
     printf("  vsencrypt -d -i foo.jpg.vse -d foo.jpg -p secret123\n");
     printf("  vsencrypt -d -i foo.jpg.vse  # will output as foo.jpg and ask password\n\n");
-    printf("Version: %s\n", VERSION);
+    printf("Version: %s\n\n", VERSION);
 }
 
 static int vse_parse_cipher(const char *cipher_name)
@@ -202,6 +203,7 @@ int main(int argc, char *argv[])
     int cipher = CIPHER_AES_256_CTR_CHACHA20; // default cipher
     int opt;
     int force_override_outfile = 0;
+    int delete_infile = 0;
     char *password = NULL;
     char *infile = NULL;
     char *outfile = NULL;
@@ -209,7 +211,7 @@ int main(int argc, char *argv[])
 
     opterr = 0; // do not allow getopt() print any error.
 
-    while ((opt = getopt(argc, argv, "hvqfedc:p:i:o:")) != -1)
+    while ((opt = getopt(argc, argv, "hvqfDedc:p:i:o:")) != -1)
     {
         switch (opt)
         {
@@ -226,6 +228,9 @@ int main(int argc, char *argv[])
             break;
         case 'f':
             force_override_outfile = 1;
+            break;
+        case 'D':
+            delete_infile = 1;
             break;
         case 'e':
             mode = MODE_ENCRYPT;
@@ -341,6 +346,11 @@ int main(int argc, char *argv[])
     {
         // delete temporial outfile
         unlink(tmp_outfile);
+    }
+
+    if (ret == 0 && delete_infile)
+    {
+        unlink(infile);
     }
 
     // if (optind >= argc)
