@@ -50,7 +50,7 @@ static int vse_decrypt_file(const char *password, size_t password_nbytes,
             break;
         }
 
-        fp_in = fopen(infile, "r");
+        fp_in = fopen(infile, "rb");
         if (fp_in == NULL)
         {
             vse_print_error("Error: Failed to open file %s for read\n", infile);
@@ -73,7 +73,7 @@ static int vse_decrypt_file(const char *password, size_t password_nbytes,
             break;
         }
 
-        fp_out = fopen(outfile, "w");
+        fp_out = fopen(outfile, "wb");
         if (fp_out == NULL)
         {
             vse_print_error("Error: Failed to open file %s for write\n", outfile);
