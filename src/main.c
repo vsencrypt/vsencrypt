@@ -333,6 +333,12 @@ int main(int argc, char *argv[])
 
     if (ret == 0)
     {
+        if (stat(outfile, &stat_buf) == 0)
+        {
+            // Try to remove exist file, if exist.
+            unlink(outfile);
+        }
+
         ret = rename(tmp_outfile, outfile);
         if (ret != 0)
         {
