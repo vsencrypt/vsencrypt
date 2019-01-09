@@ -6,6 +6,7 @@
 #include "argon2/src/blake2/blake2.h"
 #include "hexdump.h"
 #include "chacha/poly1305.h"
+#define BUF_SIZE 4096
 
 static int vse_verify_mac(const vse_header_v1_t *header,
                           const uint8_t *key,
@@ -19,9 +20,9 @@ static int vse_verify_mac(const vse_header_v1_t *header,
     blake2b_state blake2b;
     blake2b_init_key(&blake2b, FILE_HASH_LEN, header->iv, IV_LEN);
 
-    uint8_t buf[4096];
+    uint8_t buf[BUF_SIZE];
     size_t len;
-    while ((len = fread(buf, 1, 4096, fp)) > 0)
+    while ((len = fread(buf, 1, BUF_SIZE, fp)) > 0)
     {
         blake2b_update(&blake2b, buf, len);
     }
