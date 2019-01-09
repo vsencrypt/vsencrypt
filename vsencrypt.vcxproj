@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{1D8D4DD5-8711-4FE8-9A9B-8F7DEB0D271D}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>vsencrypt</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src/argon2/src/blake2;src/argon2/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\aes\aes.c" />
+    <ClCompile Include="src\argon2\src\argon2.c" />
+    <ClCompile Include="src\argon2\src\blake2\blake2b.c" />
+    <ClCompile Include="src\argon2\src\core.c" />
+    <ClCompile Include="src\argon2\src\encoding.c" />
+    <ClCompile Include="src\argon2\src\opt.c" />
+    <ClCompile Include="src\argon2\src\thread.c" />
+    <ClCompile Include="src\chacha\chacha.c" />
+    <ClCompile Include="src\chacha\chachapoly_aead.c" />
+    <ClCompile Include="src\chacha\poly1305.c" />
+    <ClCompile Include="src\crypto_random.c" />
+    <ClCompile Include="src\decrypt_v1.c" />
+    <ClCompile Include="src\encrypt_v1.c" />
+    <ClCompile Include="src\getopt.c" />
+    <ClCompile Include="src\getpass.c" />
+    <ClCompile Include="src\hexdump.c" />
+    <ClCompile Include="src\main.c" />
+    <ClCompile Include="src\salsa20\salsa20.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\aes\aes.h" />
+    <ClInclude Include="src\argon2\include\argon2.h" />
+    <ClInclude Include="src\argon2\src\blake2\blake2-impl.h" />
+    <ClInclude Include="src\argon2\src\blake2\blake2.h" />
+    <ClInclude Include="src\argon2\src\blake2\blamka-round-opt.h" />
+    <ClInclude Include="src\argon2\src\blake2\blamka-round-ref.h" />
+    <ClInclude Include="src\argon2\src\core.h" />
+    <ClInclude Include="src\argon2\src\encoding.h" />
+    <ClInclude Include="src\argon2\src\thread.h" />
+    <ClInclude Include="src\chacha\chacha.h" />
+    <ClInclude Include="src\chacha\chachapoly_aead.h" />
+    <ClInclude Include="src\chacha\poly1305.h" />
+    <ClInclude Include="src\crypto_random.h" />
+    <ClInclude Include="src\decrypt_v1.h" />
+    <ClInclude Include="src\encrypt_v1.h" />
+    <ClInclude Include="src\error.h" />
+    <ClInclude Include="src\getopt.h" />
+    <ClInclude Include="src\getpass.h" />
+    <ClInclude Include="src\hexdump.h" />
+    <ClInclude Include="src\salsa20\salsa20.h" />
+    <ClInclude Include="src\vse.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\chacha\README.md" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
