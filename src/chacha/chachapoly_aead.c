@@ -28,7 +28,7 @@
 #define le64toh(x) letoh64(x)
 
 #elif defined(__WINDOWS__)
-#include <sys/param.h>
+//#include <sys/param.h>
 #include <winsock2.h>
 
 #if BYTE_ORDER == LITTLE_ENDIAN
@@ -100,7 +100,7 @@ int chacha20poly1305_crypt(struct chachapolyaead_ctx *ctx, uint32_t seqnr,
   uint64_t chacha_iv = htole64(seqnr);
   memset(poly_key, 0, sizeof(poly_key));
   chacha_ivsetup(&ctx->main_ctx, (uint8_t *)&chacha_iv, NULL);
-  chacha_encrypt_bytes(&ctx->main_ctx, poly_key, poly_key, sizeof(poly_key));
+  chacha_xcrypt_bytes(&ctx->main_ctx, poly_key, poly_key, sizeof(poly_key));
 
   if (!is_encrypt) {
     const uint8_t *tag = src + aadlen + len;
@@ -114,12 +114,12 @@ int chacha20poly1305_crypt(struct chachapolyaead_ctx *ctx, uint32_t seqnr,
 
   if (aadlen) {
     chacha_ivsetup(&ctx->header_ctx, (uint8_t *)&chacha_iv, NULL);
-    chacha_encrypt_bytes(&ctx->header_ctx, src, dest, aadlen);
+    chacha_xcrypt_bytes(&ctx->header_ctx, src, dest, aadlen);
   }
 
   /* Set Chacha's block counter to 1 */
   chacha_ivsetup(&ctx->main_ctx, (uint8_t *)&chacha_iv, one);
-  chacha_encrypt_bytes(&ctx->main_ctx, src + aadlen, dest + aadlen, len);
+  chacha_xcrypt_bytes(&ctx->main_ctx, src + aadlen, dest + aadlen, len);
 
   /* If encrypting, calculate and append tag */
   if (is_encrypt) {
@@ -144,7 +144,7 @@ int chacha20poly1305_get_length(struct chachapolyaead_ctx *ctx,
   uint64_t seqnr64 = seqnr;
   seqnr64 = htole64(seqnr64);
   chacha_ivsetup(&ctx->header_ctx, (uint8_t *)&seqnr64, NULL);
-  chacha_encrypt_bytes(&ctx->header_ctx, ciphertext, buf, 4);
+  chacha_xcrypt_bytes(&ctx->header_ctx, ciphertext, buf, 4);
   *len_out = le32toh(buf[0]);
   return 0;
 }

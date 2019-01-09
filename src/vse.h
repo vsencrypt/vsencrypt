@@ -1,7 +1,7 @@
 #ifndef VSE_31FAB0FC_FD40_4BEF_B834_5E8D93C30C5F_H
 #define VSE_31FAB0FC_FD40_4BEF_B834_5E8D93C30C5F_H
 
-#include <sys/types.h>
+#include <stdint.h>
 #include "error.h"
 
 #define FILE_HASH_LEN 32
@@ -25,10 +25,10 @@
 
 typedef struct vse_header_v1
 {
-    u_int8_t cipher;
-    u_int8_t salt[SALT_LEN]; // salt for password
-    u_int8_t iv[IV_LEN];     // iv for encryption
-    u_int8_t mac[MAC_LEN];   //
+    uint8_t cipher;
+    uint8_t salt[SALT_LEN]; // salt for password
+    uint8_t iv[IV_LEN];     // iv for encryption
+    uint8_t mac[MAC_LEN];   //
 } vse_header_v1_t;
 
 #define FILE_HEADER_LEN (sizeof(vse_header_v1_t) / sizeof(char))

@@ -58,7 +58,7 @@ static int vse_decrypt_file(const char *password, size_t password_nbytes,
             break;
         }
 
-        u_int8_t version = 0;
+        uint8_t version = 0;
         if (fread(&version, 1, 1, fp_in) != 1)
         {
             vse_print_error("Error: Failed to read 1st byte of file %s\n", infile);
@@ -184,7 +184,7 @@ static int vse_parse_cipher(const char *cipher_name)
 
 static const char *gen_tmp_filename(const char *path)
 {
-    u_int8_t random_buf[4] = {0};
+    uint8_t random_buf[4] = {0};
     char buf[10] = {0};
     crypto_random(random_buf, 4);
 

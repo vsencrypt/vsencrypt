@@ -11,6 +11,12 @@
 #include <stdint.h>
 #include <sys/types.h>
 
+#if _MSC_VER
+#ifndef __attribute__
+#define __attribute__(x)
+#endif
+#endif
+
 #define POLY1305_KEYLEN 32
 #define POLY1305_TAGLEN 16
 

@@ -10,7 +10,12 @@ Public domain.
 #define CHACHA_H
 
 #include <stdint.h>
-#include <sys/types.h>
+
+#if _MSC_VER
+#ifndef __attribute__
+#define __attribute__(x)
+#endif
+#endif
 
 typedef struct chacha_ctx
 {

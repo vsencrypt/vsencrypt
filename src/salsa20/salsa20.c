@@ -13,14 +13,14 @@ Public domain.
 #define U8C(v) (v##U)
 #define U32C(v) (v##U)
 
-#define U8V(v) ((u_int8_t)(v)&U8C(0xFF))
-#define U32V(v) ((u_int32_t)(v)&U32C(0xFFFFFFFF))
+#define U8V(v) ((uint8_t)(v)&U8C(0xFF))
+#define U32V(v) ((uint32_t)(v)&U32C(0xFFFFFFFF))
 
 #define ROTL32(v, n) (U32V((v) << (n)) | ((v) >> (32 - (n))))
 
 #define U8TO32_LITTLE(p)                                                                \
-    (((u_int32_t)((p)[0])) | ((u_int32_t)((p)[1]) << 8) | ((u_int32_t)((p)[2]) << 16) | \
-     ((u_int32_t)((p)[3]) << 24))
+    (((uint32_t)((p)[0])) | ((uint32_t)((p)[1]) << 8) | ((uint32_t)((p)[2]) << 16) | \
+     ((uint32_t)((p)[3]) << 24))
 
 #define U32TO8_LITTLE(p, v)      \
     do                           \
@@ -39,7 +39,7 @@ Public domain.
 static const char sigma[16] = "expand 32-byte k";
 static const char tau[16] = "expand 16-byte k";
 
-void salsa20_keysetup(salsa20_ctx_t *x, const u_int8_t *k, u_int32_t kbits, u_int32_t ivbits)
+void salsa20_keysetup(salsa20_ctx_t *x, const uint8_t *k, uint32_t kbits, uint32_t ivbits)
 {
     const char *constants;
 
@@ -66,7 +66,7 @@ void salsa20_keysetup(salsa20_ctx_t *x, const u_int8_t *k, u_int32_t kbits, u_in
     x->input[15] = U8TO32_LITTLE(constants + 12);
 }
 
-void salsa20_ivsetup(salsa20_ctx_t *x, const u_int8_t *iv)
+void salsa20_ivsetup(salsa20_ctx_t *x, const uint8_t *iv)
 {
     x->input[6] = U8TO32_LITTLE(iv + 0);
     x->input[7] = U8TO32_LITTLE(iv + 4);
@@ -74,13 +74,13 @@ void salsa20_ivsetup(salsa20_ctx_t *x, const u_int8_t *iv)
     x->input[9] = 0;
 }
 
-void salsa20_xcrypt_bytes(salsa20_ctx_t *x, const u_int8_t *m, u_int8_t *c, u_int32_t bytes)
+void salsa20_xcrypt_bytes(salsa20_ctx_t *x, const uint8_t *m, uint8_t *c, uint32_t bytes)
 {
-    u_int32_t x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15;
-    u_int32_t j0, j1, j2, j3, j4, j5, j6, j7, j8, j9, j10, j11, j12, j13, j14, j15;
-    u_int8_t *ctarget;
-    u_int8_t tmp[64];
-    int i;
+    uint32_t x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15;
+    uint32_t j0, j1, j2, j3, j4, j5, j6, j7, j8, j9, j10, j11, j12, j13, j14, j15;
+    uint8_t *ctarget;
+    uint8_t tmp[64];
+    uint32_t i;
 
     if (!bytes)
         return;

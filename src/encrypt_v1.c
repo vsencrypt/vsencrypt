@@ -11,9 +11,9 @@
 #include "chacha/chacha.h"
 #include "chacha/poly1305.h"
 
-int vse_gen_key_v1(const u_int8_t *salt, size_t salt_nbytes,
+int vse_gen_key_v1(const uint8_t *salt, size_t salt_nbytes,
                    const char *password, size_t password_nbytes,
-                   size_t key_nbytes, u_int8_t *key)
+                   size_t key_nbytes, uint8_t *key)
 {
     uint32_t time_cost = 2;           // 2-pass computation
     uint32_t memory_cost = (1 << 16); // 64 MB memory vse_usage
@@ -30,9 +30,9 @@ int vse_gen_key_v1(const u_int8_t *salt, size_t salt_nbytes,
  *
  * Faster than vse_gen_key_v1().
  */
-int vse_gen_iv_v1(const u_int8_t *salt, size_t salt_nbytes,
-                  const u_int8_t *password, size_t password_nbytes,
-                  size_t iv_nbytes, u_int8_t *iv)
+int vse_gen_iv_v1(const uint8_t *salt, size_t salt_nbytes,
+                  const uint8_t *password, size_t password_nbytes,
+                  size_t iv_nbytes, uint8_t *iv)
 {
     uint32_t time_cost = 1;          // 1-pass computation
     uint32_t memory_cost = (1 << 8); // 32 MB memory vse_usage
@@ -45,32 +45,32 @@ int vse_gen_iv_v1(const u_int8_t *salt, size_t salt_nbytes,
 }
 
 void vse_calculate_mac_v1(const vse_header_v1_t *header,
-                          const u_int8_t *file_hash,
-                          const u_int8_t *key, // 32 bytes
-                          u_int8_t *mac)       // 16 bytes. out
+                          const uint8_t *file_hash,
+                          const uint8_t *key, // 32 bytes
+                          uint8_t *mac)       // 16 bytes. out
 {
-    u_int8_t message[SALT_LEN + IV_LEN + FILE_HASH_LEN] = {0};
+    uint8_t message[SALT_LEN + IV_LEN + FILE_HASH_LEN] = {0};
     memcpy(message, header->salt, SALT_LEN);
     memcpy(message + SALT_LEN, header->iv, IV_LEN);
     memcpy(message + SALT_LEN + IV_LEN, file_hash, FILE_HASH_LEN);
 
     poly1305_auth(mac,
-                  message, sizeof(message) / sizeof(u_int8_t),
+                  message, sizeof(message) / sizeof(uint8_t),
                   key);
 }
 
 static void vse_setup_cipher_v1(salsa20_ctx_t *salsa20,
                                 chacha_ctx_t *chacha,
                                 aes_ctx_t *aes,
-                                const u_int8_t *iv, size_t iv_nbytes,
-                                const u_int8_t *key, size_t key_nbytes)
+                                const uint8_t *iv, size_t iv_nbytes,
+                                const uint8_t *key, size_t key_nbytes)
 {
-    u_int8_t iv_aes[IV_LEN] = {0};
-    u_int8_t iv_chacha[IV_LEN] = {0};
-    u_int8_t iv_salsa20[IV_LEN] = {0};
-    vse_gen_iv_v1(iv, iv_nbytes, (u_int8_t *)"aes", 3, IV_LEN, iv_aes);
-    vse_gen_iv_v1(iv, iv_nbytes, (u_int8_t *)"chacha", 6, IV_LEN, iv_chacha);
-    vse_gen_iv_v1(iv, iv_nbytes, (u_int8_t *)"salsa20", 7, IV_LEN, iv_chacha);
+    uint8_t iv_aes[IV_LEN] = {0};
+    uint8_t iv_chacha[IV_LEN] = {0};
+    uint8_t iv_salsa20[IV_LEN] = {0};
+    vse_gen_iv_v1(iv, iv_nbytes, (uint8_t *)"aes", 3, IV_LEN, iv_aes);
+    vse_gen_iv_v1(iv, iv_nbytes, (uint8_t *)"chacha", 6, IV_LEN, iv_chacha);
+    vse_gen_iv_v1(iv, iv_nbytes, (uint8_t *)"salsa20", 7, IV_LEN, iv_chacha);
 
     AES_init_ctx_iv(aes, key, iv_aes);
 
@@ -85,7 +85,7 @@ int vse_block_xcrypt_v1(int cipher,
                         salsa20_ctx_t *salsa20,
                         chacha_ctx_t *chacha,
                         aes_ctx_t *aes,
-                        u_int8_t *buf, size_t buf_nbytes)
+                        uint8_t *buf, size_t buf_nbytes)
 {
     int ret = 0;
     switch (cipher)
@@ -125,10 +125,10 @@ int vse_block_xcrypt_v1(int cipher,
 }
 
 int vse_stream_crypt_v1(int mode, int cipher,
-                        const u_int8_t *iv, size_t iv_nbytes,
-                        const u_int8_t *key, size_t key_nbytes,
+                        const uint8_t *iv, size_t iv_nbytes,
+                        const uint8_t *key, size_t key_nbytes,
                         FILE *fp_in, FILE *fp_out,
-                        u_int8_t *file_hash, size_t file_hash_nbytes)
+                        uint8_t *file_hash, size_t file_hash_nbytes)
 {
     int ret = 0;
     aes_ctx_t aes;
@@ -144,7 +144,7 @@ int vse_stream_crypt_v1(int mode, int cipher,
     blake2b_state blake2b;
     blake2b_init_key(&blake2b, file_hash_nbytes, iv, iv_nbytes);
 
-    u_int8_t buf[4096];
+    uint8_t buf[4096];
     size_t len;
     while ((len = fread(buf, 1, 4096, fp_in)) > 0)
     {
@@ -189,8 +189,8 @@ int vse_encrypt_file_v1(int cipher,
                         const char *infile, const char *outfile)
 {
     int ret = 0;
-    u_int8_t key[KEY_LEN] = {0};
-    u_int8_t file_hash[FILE_HASH_LEN];
+    uint8_t key[KEY_LEN] = {0};
+    uint8_t file_hash[FILE_HASH_LEN];
     vse_header_v1_t header;
     memset(&header, 0, sizeof(vse_header_v1_t));
 
@@ -221,7 +221,7 @@ int vse_encrypt_file_v1(int cipher,
             break;
         }
 
-        u_int8_t version = 1;
+        uint8_t version = 1;
         if (fwrite(&version, 1, 1, fp_out) != 1)
         {
             vse_print_error("Error: Failed to write version: %s\n", strerror(errno));

@@ -2,7 +2,7 @@ ARGON2_SRC = src/argon2/src/core.c src/argon2/src/argon2.c src/argon2/src/ref.c 
 AES_SRC = src/aes/aes.c
 SALSA20_SRC = src/salsa20/salsa20.c
 CHACHA20_SRC = src/chacha/chacha.c src/chacha/poly1305.c
-MAIN_SRC = src/main.c src/encrypt_v1.c src/decrypt_v1.c src/crypto_random.c src/getopt.c src/hexdump.c
+MAIN_SRC = src/main.c src/encrypt_v1.c src/decrypt_v1.c src/crypto_random.c src/getopt.c src/hexdump.c src/getpass.c
 SRC = $(MAIN_SRC) $(AES_SRC) $(ARGON2_SRC) $(SALSA20_SRC) $(CHACHA20_SRC)
 
 INCLUDES=-Isrc/argon2/include -Isrc/argon2/src/blake2

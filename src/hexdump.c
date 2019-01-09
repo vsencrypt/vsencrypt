@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "hexdump.h"
 
-const char *hexdump(const u_int8_t *buf,
+const char *hexdump(const uint8_t *buf,
                     size_t buf_nbytes,
                     char *hex_out)
 {

@@ -8,18 +8,18 @@
 #include "chacha/poly1305.h"
 
 static int vse_verify_mac(const vse_header_v1_t *header,
-                          const u_int8_t *key,
+                          const uint8_t *key,
                           FILE *fp)
 {
     int ret = 0;
-    u_int8_t mac[MAC_LEN] = {0};
+    uint8_t mac[MAC_LEN] = {0};
     long pos = ftell(fp);
 
-    u_int8_t file_hash[FILE_HASH_LEN] = {0};
+    uint8_t file_hash[FILE_HASH_LEN] = {0};
     blake2b_state blake2b;
     blake2b_init_key(&blake2b, FILE_HASH_LEN, header->iv, IV_LEN);
 
-    u_int8_t buf[4096];
+    uint8_t buf[4096];
     size_t len;
     while ((len = fread(buf, 1, 4096, fp)) > 0)
     {
@@ -55,8 +55,8 @@ int vse_decrypt_file_v1(const char *password, size_t password_nbytes,
                         FILE *fp_in, FILE *fp_out)
 {
     int ret = 0;
-    u_int8_t key[KEY_LEN] = {0};
-    u_int8_t file_hash[FILE_HASH_LEN];
+    uint8_t key[KEY_LEN] = {0};
+    uint8_t file_hash[FILE_HASH_LEN];
 
     vse_header_v1_t header = {0};
     if ((fread(&header, sizeof(vse_header_v1_t), 1, fp_in)) != 1)
