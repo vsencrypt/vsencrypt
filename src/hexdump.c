@@ -5,7 +5,7 @@ const char *hexdump(const uint8_t *buf,
                     size_t buf_nbytes,
                     char *hex_out)
 {
-    int i;
+    size_t i;
 
     for (i = 0; i < buf_nbytes; ++i)
     {

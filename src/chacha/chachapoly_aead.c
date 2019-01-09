@@ -137,7 +137,7 @@ out:
 int chacha20poly1305_get_length(struct chachapolyaead_ctx *ctx,
                                 uint32_t *len_out, uint32_t seqnr,
                                 const uint8_t *ciphertext, uint32_t len) {
-  uint8_t buf[4], seqbuf[8];
+  uint8_t buf[4];
 
   if (len < 4)
     return -1;
