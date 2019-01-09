@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
     int opt;
     int force_override_outfile = 0;
     int delete_infile = 0;
-    char *password = NULL;
+    const char *password = NULL;
     char *infile = NULL;
     char *outfile = NULL;
     size_t password_nbytes = 0;
