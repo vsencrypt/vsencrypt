@@ -135,11 +135,11 @@ static void vse_usage(const char *argv0)
     printf("  -p Password.\n\n");
     printf("EXAMPLES\n");
     printf("  Encryption:\n");
-    printf("  vsencrypt -e -i foo.jpg -o foo.jpg.vse -p secret123\n");
-    printf("  vsencrypt -e -i foo.jpg      # will output as foo.jpg.vse and ask password\n\n");
+    printf("  %s -e -i foo.jpg -o foo.jpg.vse -p secret123\n", argv0);
+    printf("  %s -e -i foo.jpg      # will output as foo.jpg.vse and ask password\n\n", argv0);
     printf("  Decryption:\n");
-    printf("  vsencrypt -d -i foo.jpg.vse -d foo.jpg -p secret123\n");
-    printf("  vsencrypt -d -i foo.jpg.vse  # will output as foo.jpg and ask password\n\n");
+    printf("  %s -d -i foo.jpg.vse -d foo.jpg -p secret123\n", argv0);
+    printf("  %s -d -i foo.jpg.vse  # will output as foo.jpg and ask password\n\n", argv0);
     printf("Version: %s\n\n", VERSION);
 }
 
