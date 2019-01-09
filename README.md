@@ -10,7 +10,7 @@ Supported ciphers:
 - **salsa20**           256bits.
 - **aes256**            AES 256bits in CTR mode.
 - **chacha20_aes256**
-- **aes256_chacha20**
+- **aes256_chacha20**   default cipher.
 - **salsa20_aes256**
 - **aes256_salsa20**
 
@@ -18,6 +18,7 @@ Supported ciphers:
 
 - Mac OS
 - Linux
+- Windows
 
 ## Build
 
@@ -47,14 +48,14 @@ Supported ciphers:
 
     -d Decryption.
 
-    -a Encryption cipher, used in encryption mode(-e) only.
+    -c Encryption cipher, used in encryption mode(-e) only.
 
         Available ciphers:
 
         chacha20         256bit, faster than AES 256.
         salsa20          256bit, faster than AES 256.
         aes256           AES 256bit in CTR mode.
-        aes256_chacha20  aes256 then chacha20.
+        aes256_chacha20  aes256 then chacha20 (default cipher).
         aes256_salsa20   aes256 then salsa20.
         chacha20_aes256  chacha20 then aes256.
         salsa20_aes256   salsa20 then aes256.
