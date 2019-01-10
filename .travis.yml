@@ -3,11 +3,11 @@ language: c
 os:
   - linux
   - osx
+  - windows
 
 compiler:
   - clang
   - gcc
 
 script:
-  - make all
-  - make test
+  - ./scripts/ci.sh
