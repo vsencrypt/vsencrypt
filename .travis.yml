@@ -3,15 +3,10 @@ language: c
 os:
   - linux
   - osx
-  - windows
 
 compiler:
   - clang
   - gcc
-
-env:
-  global:
-   - "PATH=$PATH:$TRAVIS_BUILD_DIR/bin"
 
 script:
   - ./scripts/ci.sh
