@@ -161,9 +161,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="src\aes\aes.c" />
     <ClCompile Include="src\argon2\src\argon2.c" />
     <ClCompile Include="src\argon2\src\blake2\blake2b.c" />
@@ -207,6 +204,7 @@
     <ClInclude Include="src\vse.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="README.md" />
     <None Include="src\chacha\README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
