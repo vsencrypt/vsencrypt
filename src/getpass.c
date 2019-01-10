@@ -8,7 +8,7 @@
 
 #define _PASSWORD_LEN 128
 
-static const char *_getpass(char *buf, size_t buf_nbytes)
+static const char *_getpass(char *buf, int buf_nbytes)
 {
 	char *ret = fgets(buf, buf_nbytes, stdin);
 	if (ret != NULL)

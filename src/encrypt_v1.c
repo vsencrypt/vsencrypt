@@ -85,7 +85,7 @@ int vse_block_xcrypt_v1(int cipher,
                         salsa20_ctx_t *salsa20,
                         chacha_ctx_t *chacha,
                         aes_ctx_t *aes,
-                        uint8_t *buf, size_t buf_nbytes)
+                        uint8_t *buf, uint32_t buf_nbytes)
 {
     int ret = 0;
     switch (cipher)
@@ -148,7 +148,7 @@ int vse_stream_crypt_v1(int mode, int cipher,
     size_t len;
     while ((len = fread(buf, 1, 4096, fp_in)) > 0)
     {
-        ret = vse_block_xcrypt_v1(cipher, &salsa20, &chacha, &aes, buf, len);
+        ret = vse_block_xcrypt_v1(cipher, &salsa20, &chacha, &aes, buf, (uint32_t)len);
         if (ret != 0)
         {
             return ret;
