@@ -35,4 +35,12 @@ typedef struct vse_header_v1
 
 void vse_print_error(const char *fmt, ...);
 
+typedef struct vse_cipher
+{
+    const char *name;
+    void *ctx;
+    int (*encrypt)(uint8_t *in, uint32_t in_nbytes, uint8_t *out, uint32_t out_nbytes);
+    int (*decrypt)(uint8_t *in, uint32_t in_nbytes, uint8_t *out, uint32_t out_nbytes);
+} vse_cipher_t;
+
 #endif

@@ -11,6 +11,23 @@
 #include "chacha/chacha.h"
 #include "chacha/poly1305.h"
 
+void cipher_chacha20_encrypt(uint8_t *in, uint32_t in_nbytes, uint8_t *out, uint32_t out_nbytes)
+{
+
+}
+
+int cipher_chacha20_decrypt(uint8_t *in, uint32_t in_nbytes, uint8_t *out, uint32_t out_nbytes)
+{
+
+}
+typedef struct vse_cipher
+{
+    const char *name;
+    void *ctx;
+    int (*encrypt)(uint8_t *in, uint32_t in_nbytes, uint8_t *out, uint32_t out_nbytes);
+    int (*decrypt)(uint8_t *in, uint32_t in_nbytes, uint8_t *out, uint32_t out_nbytes);
+} vse_cipher_t;
+
 int vse_gen_key_v1(const uint8_t *salt, size_t salt_nbytes,
                    const char *password, size_t password_nbytes,
                    size_t key_nbytes, uint8_t *key)

@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/vsencrypt/vsencrypt.svg?branch=master)](https://travis-ci.org/vsencrypt/vsencrypt)
 
-Very strong encryption to keep your file securely.
+A very strong encryption command line app to keep your file securely.
 
 Supported ciphers:
 
@@ -85,11 +85,11 @@ Supported ciphers:
 
 ### Version
 
- 1 byte. File format version. Current version is 1.
+ 1 byte. File format version. Current version is 0x1.
 
 ### Header
 
-  Determined by version.
+File header is determined by version.
 
 #### Version 1 Header
 
@@ -100,15 +100,16 @@ Supported ciphers:
 - 1 byte `cipher` algorithm.
 - 16 bytes `salt` for password.
 - 16 bytes `iv` for encryption/decryption.
-- 16 bytes `mac` (message authentication code) of poly1305 used to verify the data integrity and the authenticity.
+- 16 bytes `mac` (Message Authentication Code) of poly1305 used to verify the data integrity and the authenticity.
 
-Version 1 header total size is 1(version) + 1(cipher) + salt(16) + 16(iv) + mac(16) = 50 bytes.
+Version 1 header total size is 1(version) + 1(cipher) + 16(salt) + 16(iv) + 16(mac) = 50 bytes.
 
 ### Crypto
 
 Key derivation function is [Argon2](https://en.wikipedia.org/wiki/Argon2) which was selected as the winner of the Password Hashing Competition in July 2015.
 
-[Poly1305](https://en.wikipedia.org/wiki/Poly1305) is used as message authentication code (MAC). Poly1305 has been standardized in [RFC 7539](https://tools.ietf.org/html/rfc7539).
+[Poly1305](https://en.wikipedia.org/wiki/Poly1305) is used as message authentication code (MAC).
+Poly1305 has been standardized in [RFC 7539](https://tools.ietf.org/html/rfc7539).
 
 ## Static Check
 
