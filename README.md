@@ -1,6 +1,6 @@
 # vsencrypt
 
-[![Build Status](https://travis-ci.org/vsencrypt/vsencrypt.svg?branch=master)](https://travis-ci.org/vsencrypt/vsencrypt)
+[![Build Status](https://github.com/vsencrypt/vsencrypt/actions/workflows/CI.yml/badge.svg)](https://github.com/vsencrypt/vsencrypt/actions/workflows/CI.yml)
 
 A very strong encryption command line app to keep your file securely.
 
