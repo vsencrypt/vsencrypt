@@ -205,7 +205,7 @@ int vse_encrypt_file_v1(int cipher,
     FILE *fp_out = NULL;
     do
     {
-        fp_in = fopen(infile, "r");
+        fp_in = fopen(infile, "rb");
         if (fp_in == NULL)
         {
             vse_print_error("Error: Failed to open input file %s: %s\n", infile, strerror(errno));
@@ -213,7 +213,7 @@ int vse_encrypt_file_v1(int cipher,
             break;
         }
 
-        fp_out = fopen(outfile, "w");
+        fp_out = fopen(outfile, "wb");
         if (fp_out == NULL)
         {
             vse_print_error("Error: Failed to open output file %s: %s\n", outfile, strerror(errno));
