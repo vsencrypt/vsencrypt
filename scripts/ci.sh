@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [[ $TRAVIS_OS_NAME == 'windows' ]]; then
+if [[ $RUNNER_OS == 'Windows' ]]; then
   df
   #find / -name "MsBuild.exe"
   #find / -name "cl.exe"
