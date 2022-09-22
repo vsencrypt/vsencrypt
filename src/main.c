@@ -15,13 +15,13 @@
 
 #define VERSION "1.0.0"
 
-static int g_quite = 0;
+static int g_quiet = 0;
 
 void vse_print_error(const char *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    if (!g_quite)
+    if (!g_quiet)
         vfprintf(stderr, fmt, ap);
     va_end(ap);
 }
@@ -116,7 +116,7 @@ static void vse_usage(const char *argv0)
     printf("  The following options are available:\n\n");
     printf("  -h Help.\n\n");
     printf("  -v Show version.\n\n");
-    printf("  -q Quiet. No error output.\n\n");
+    printf("  -q Quiet mode. No error output.\n\n");
     printf("  -f Force override output file if already exist.\n\n");
     printf("  -D Delete input file if encrypt/decrypt success.\n\n");
     printf("  -e Encryption.\n\n");
@@ -222,9 +222,9 @@ int main(int argc, char *argv[])
             printf("version: %s\n", VERSION);
             return 0;
         case 'q':
-            // quite mode, no error print.
+            // quiet mode, no error print.
             // Use exit code to determine encrypt/decrypt success/failure
-            g_quite = 1;
+            g_quiet = 1;
             break;
         case 'f':
             force_override_outfile = 1;
