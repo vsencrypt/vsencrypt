@@ -8,6 +8,7 @@ D. J. Bernstein
 Public domain.
 */
 
+#include <stddef.h>
 #include "salsa20.h"
 
 #define U8C(v) (v##U)
@@ -78,7 +79,7 @@ void salsa20_xcrypt_bytes(salsa20_ctx_t *x, const uint8_t *m, uint8_t *c, uint32
 {
     uint32_t x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15;
     uint32_t j0, j1, j2, j3, j4, j5, j6, j7, j8, j9, j10, j11, j12, j13, j14, j15;
-    uint8_t *ctarget;
+    uint8_t *ctarget = NULL;
     uint8_t tmp[64];
     uint32_t i;
 
