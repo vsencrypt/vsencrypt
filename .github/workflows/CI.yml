@@ -29,5 +29,3 @@ jobs:
     - name: Build and test
       run: ./scripts/ci.sh
 
-    - name: check
-      run: dir /s /b
