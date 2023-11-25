@@ -26,6 +26,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Check env
+      run: env
+
     - name: Build and test
       run: ./scripts/ci.sh
 
