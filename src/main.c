@@ -13,7 +13,7 @@
 #include "encrypt_v1.h"
 #include "decrypt_v1.h"
 
-#define VERSION "1.0.0"
+#define VERSION "1.0.1"
 
 static int g_quiet = 0;
 
@@ -261,18 +261,21 @@ int main(int argc, char *argv[])
     if (mode == MODE_UNKNOWN)
     {
         vse_print_error("Error: Missing -e or -d.\n");
+        vse_usage(argv[0]);
         return 1;
     }
 
     if (mode == MODE_ENCRYPT && cipher == CIPHER_UNKNOWN)
     {
         vse_print_error("Error: Invalid cipher.\n");
+        vse_usage(argv[0]);
         return 1;
     }
 
     if (infile == NULL)
     {
         vse_print_error("Error: Missing -i\n");
+        vse_usage(argv[0]);
         return 1;
     }
 
@@ -300,6 +303,7 @@ int main(int argc, char *argv[])
         if (outfile == NULL)
         {
             vse_print_error("Error: missing -o\n");
+            vse_usage(argv[0]);
             return 1;
         }
     }
