@@ -7,3 +7,5 @@
 *.vcxproj.user
 Release/
 Debug/
+/tmp
+/vsencrypt
