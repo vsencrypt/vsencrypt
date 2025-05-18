@@ -22,8 +22,10 @@ Supported ciphers:
 
 ## Build
 
-    make
-    make test
+```sh
+make
+make test
+```
 
 ## Usage
 
@@ -115,7 +117,9 @@ Poly1305 has been standardized in [RFC 7539](https://tools.ietf.org/html/rfc7539
 
 clang setup for static analysis
 
-    export C_INCLUDE_PATH=`pwd`/src:`pwd`/src/argon2/include:`pwd`/src/argon2/src/blake2
+```sh
+export C_INCLUDE_PATH=`pwd`/src:`pwd`/src/argon2/include:`pwd`/src/argon2/src/blake2
+```
 
 ## License
 
