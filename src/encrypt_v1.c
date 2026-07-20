@@ -70,7 +70,7 @@ static void vse_setup_cipher_v1(salsa20_ctx_t *salsa20,
     uint8_t iv_salsa20[IV_LEN] = {0};
     vse_gen_iv_v1(iv, iv_nbytes, (uint8_t *)"aes", 3, IV_LEN, iv_aes);
     vse_gen_iv_v1(iv, iv_nbytes, (uint8_t *)"chacha", 6, IV_LEN, iv_chacha);
-    vse_gen_iv_v1(iv, iv_nbytes, (uint8_t *)"salsa20", 7, IV_LEN, iv_chacha);
+    vse_gen_iv_v1(iv, iv_nbytes, (uint8_t *)"salsa20", 7, IV_LEN, iv_salsa20);
 
     AES_init_ctx_iv(aes, key, iv_aes);
 
