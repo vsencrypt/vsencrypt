@@ -48,7 +48,7 @@ static int vse_decrypt_file(const char *password, size_t password_nbytes,
             break;
         }
 
-        if (buf.st_size < FILE_HEADER_LEN)
+        if (buf.st_size < (off_t)(1 + FILE_HEADER_LEN))
         {
             vse_print_error("Error: File too small to decrypted: %s\n", infile);
             ret = ERR_DECRYPT_FILE_INPUT_FILE_SIZE_TOO_SMALL;

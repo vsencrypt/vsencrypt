@@ -15,6 +15,11 @@ static int vse_verify_mac(const vse_header_v1_t *header,
     int ret = 0;
     uint8_t mac[MAC_LEN] = {0};
     long pos = ftell(fp);
+    if (pos == -1L)
+    {
+        vse_print_error("Error: Failed to get file position: %s\n", strerror(errno));
+        return ERR_DECRYPT_V1_FAILED_TO_READ_INFILE;
+    }
 
     uint8_t file_hash[FILE_HASH_LEN] = {0};
     blake2b_state blake2b;
@@ -48,7 +53,11 @@ static int vse_verify_mac(const vse_header_v1_t *header,
         return ERR_DECRYPT_V1_INVALID_PASSWORD;
     }
 
-    fseek(fp, pos, SEEK_SET);
+    if (fseek(fp, pos, SEEK_SET) != 0)
+    {
+        vse_print_error("Error: Failed to seek in file: %s\n", strerror(errno));
+        return ERR_DECRYPT_V1_FAILED_TO_READ_INFILE;
+    }
     return ret;
 }
 
