@@ -16,9 +16,9 @@ all: $(TARGET)
 $(TARGET): $(SRC)
 	$(CC) $(CFLAGS) -o $(TARGET) $(SRC) $(LDFLAGS)
 
-.PHONY: test_aes test_decryption_exist_files test_encryption
+.PHONY: test_aes test_decryption_exist_files test_encryption test_folder
 
-test: all test_aes test_decryption_exist_files test_encryption
+test: all test_aes test_decryption_exist_files test_encryption test_folder
 
 test_aes: $(AES_TEST)
 	./$(AES_TEST)
@@ -28,6 +28,9 @@ test_decryption_exist_files:
 
 test_encryption:
 	./scripts/test_encryption.sh
+
+test_folder:
+	./scripts/test_folder.sh
 
 $(AES_TEST): src/aes/aes.c src/aes/aes.h src/aes/aes_test.c
 	$(CC) -Wall -o $(AES_TEST) src/aes/aes.c src/aes/aes_test.c
